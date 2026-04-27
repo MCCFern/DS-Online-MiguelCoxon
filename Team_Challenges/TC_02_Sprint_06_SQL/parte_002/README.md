@@ -68,7 +68,7 @@ Dos opciones:
 
 ---
 
-## Presentación — Sprint 7
+## Presentación — Sprint 8
 
 - Duración total: **10 minutos** (ambas partes)
-- Lugar: sesión Team Challenge Sprint 7
+- Lugar: sesión Team Challenge Sprint 8
