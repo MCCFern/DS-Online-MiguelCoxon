@@ -76,12 +76,13 @@ progresión clara: *de lo simple a lo potente*.
 
 ## 📈 Resultados
 
-RMSE estimado por validación cruzada (5-fold), en euros:
+RMSE estimado por validación cruzada (5-fold) sobre **todo** `train.csv`, en euros — cada
+cifra la imprime la **sección 5** de su notebook, así que es reproducible ejecutándolo:
 
 | Notebook | Modelo | RMSE (€) ↓ | Rol |
 |---|---|:---:|---|
 | `01_submission_baseline` | Regresión Lineal (+ `log1p`) | ~355 | Baseline interpretable |
-| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~290 | Modelos de ensemble clásicos |
+| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | Modelos de ensemble clásicos |
 | `03_submission_xgboost` | **XGBoost** 🏆 | **~257** | Mejor modelo |
 
 > Del baseline al XGBoost: **−98 € de error (~28 % de mejora)**.
@@ -93,11 +94,17 @@ RMSE estimado por validación cruzada (5-fold), en euros:
 - **El *feature engineering* es donde se ganan los puntos**, no el algoritmo. La PPI y el
   desglose de almacenamiento por tipo son las variables más influyentes.
 - **El matiz del `log`**: transformar el objetivo a escala logarítmica **ayuda** a los modelos
-  lineales y al SVR (el precio está sesgado a la derecha), pero **perjudica** al *boosting*,
-  cuyo objetivo ya es el error cuadrático en euros. Por eso XGBoost entrena sobre el precio
-  directo. *(Es el detalle más fino del proyecto.)*
-- **Sin sobre-ingeniería**: se probaron LightGBM y *blends*, pero no superan al XGBoost
-  individual dentro del ruido de la validación → la solución final es **simple y defendible**.
+  lineales y al SVR (el precio está sesgado a la derecha). En *boosting*, en cambio, las dos
+  lentes de validación (CV y holdout) discrepan por 3–5 € — dentro del ruido entre folds —,
+  así que XGBoost entrena sobre el precio directo por simplicidad. *(Es el detalle más fino
+  del proyecto.)*
+- **Validación sin autoengaño**: el mejor score de una búsqueda de hiperparámetros es el mejor
+  de N candidatos sobre los mismos folds y viene sesgado al optimismo (*winner's curse*). Cada
+  "ganador" se revalida sobre un holdout intacto: en el notebook 03 el ganador del search **no**
+  superaba a la config base → la submission final usa la config base.
+- **Sin sobre-ingeniería**: LightGBM y un *blend* se comparan en el propio notebook 03; ninguno
+  supera al XGBoost individual de forma consistente (diferencias dentro del ruido de la CV) →
+  en el empate gana la solución **simple y defendible**.
 
 ---
 

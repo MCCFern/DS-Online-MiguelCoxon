@@ -74,12 +74,13 @@ powerful*.
 
 ## 📈 Results
 
-RMSE estimated by 5-fold cross-validation, in euros:
+RMSE estimated by 5-fold cross-validation on the **full** `train.csv`, in euros — each figure
+is printed by **section 5** of its notebook, so it's reproducible by running it:
 
 | Notebook | Model | RMSE (€) ↓ | Role |
 |---|---|:---:|---|
 | `01_submission_baseline` | Linear Regression (+ `log1p`) | ~355 | Interpretable baseline |
-| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~290 | Classic ensemble models |
+| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | Classic ensemble models |
 | `03_submission_xgboost` | **XGBoost** 🏆 | **~257** | Best model |
 
 > From baseline to XGBoost: **−€98 error (~28% improvement)**.
@@ -91,10 +92,16 @@ RMSE estimated by 5-fold cross-validation, in euros:
 - **Feature engineering is where the points are won**, not the algorithm. PPI and the
   storage-by-type breakdown are the most influential features.
 - **The `log` nuance**: log-transforming the target **helps** linear models and SVR (price is
-  right-skewed) but **hurts** boosting, whose objective is already squared error in euros.
-  That's why XGBoost trains on the raw price. *(The project's most subtle detail.)*
-- **No over-engineering**: LightGBM and blends were tried but don't beat single XGBoost within
-  CV noise → the final solution is **simple and defensible**.
+  right-skewed). For boosting, however, the two validation lenses (CV and holdout) disagree by
+  €3–5 — within fold noise — so XGBoost trains on the raw price for simplicity. *(The
+  project's most subtle detail.)*
+- **Validation without self-deception**: a hyperparameter search's best score is the best of N
+  candidates on the same folds and is optimistically biased (*winner's curse*). Every "winner"
+  gets re-validated on an untouched holdout: in notebook 03 the search winner did **not** beat
+  the base config → the final submission ships the base config.
+- **No over-engineering**: LightGBM and a *blend* are compared inside notebook 03 itself;
+  neither beats single XGBoost consistently (differences within CV noise) → ties go to the
+  **simple, defensible** solution.
 
 ---
 
