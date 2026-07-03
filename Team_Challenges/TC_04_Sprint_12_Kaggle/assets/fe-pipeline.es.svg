@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 422" width="680" role="img" aria-labelledby="t d">
+<title id="t">Cómo una fila de texto se convierte en features</title><desc id="d">Cada columna de texto crudo se transforma en varias variables numéricas o categóricas; las marcadas con asterisco son features calculadas que no existían en los datos.</desc>
+<style>text{stroke:none;font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif}.th{font-size:14px;font-weight:600;fill:#2A2A28}.ts{font-size:12px;font-weight:400;fill:#56554F}.bg{fill:#FCFBF9;stroke:#E8E6DF;stroke-width:1}.c-gray{fill:#F1EFE8;stroke:#C4C2B8}.c-teal{fill:#DEF3EB;stroke:#69C9AA}.c-purple{fill:#EBEAFD;stroke:#B1AAEE}</style>
+<rect class="bg" x="0.5" y="0.5" width="679" height="421" rx="14"/>
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8A857D"/></marker></defs>
+<text class="ts" x="40" y="32">dato crudo · 1 columna de texto</text>
+<text class="ts" x="310" y="32">features para el modelo · varias columnas</text>
+<g class="c-gray"><rect x="40" y="44" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="62">ScreenResolution</text><text class="ts" x="52" y="80">Full HD 1920x1080</text></g>
+<line x1="242" y1="66" x2="304" y2="66" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="58" text-anchor="middle">fórmula</text>
+<g class="c-teal"><rect x="310" y="44" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="72">res_w, res_h, pixels*, ppi*, ips, touch</text></g>
+<g class="c-gray"><rect x="40" y="102" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="120">Cpu</text><text class="ts" x="52" y="138">Intel Core i3 6006U 2GHz</text></g>
+<line x1="242" y1="124" x2="304" y2="124" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="116" text-anchor="middle">regex</text>
+<g class="c-teal"><rect x="310" y="102" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="130">cpu_brand, cpu_cat, cpu_ghz</text></g>
+<g class="c-gray"><rect x="40" y="160" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="178">Memory</text><text class="ts" x="52" y="196">256GB SSD</text></g>
+<line x1="242" y1="182" x2="304" y2="182" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="174" text-anchor="middle">split</text>
+<g class="c-teal"><rect x="310" y="160" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="188">ssd, hdd, flash, hybrid, total*, has_ssd*</text></g>
+<g class="c-gray"><rect x="40" y="218" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="236">Ram / Weight</text><text class="ts" x="52" y="254">8GB / 1.86kg</text></g>
+<line x1="242" y1="240" x2="304" y2="240" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="232" text-anchor="middle">strip</text>
+<g class="c-teal"><rect x="310" y="218" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="246">ram, weight</text></g>
+<g class="c-gray"><rect x="40" y="276" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="294">Gpu</text><text class="ts" x="52" y="312">Intel HD Graphics 520</text></g>
+<line x1="242" y1="298" x2="304" y2="298" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="290" text-anchor="middle">buscar</text>
+<g class="c-teal"><rect x="310" y="276" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="304">gpu_brand, gpu_highend*</text></g>
+<g class="c-gray"><rect x="40" y="334" width="200" height="44" rx="8" stroke-width="0.5"/><text class="th" x="52" y="352">OpSys</text><text class="ts" x="52" y="370">Windows 10</text></g>
+<line x1="242" y1="356" x2="304" y2="356" stroke="#8A857D" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="ts" x="276" y="348" text-anchor="middle">map</text>
+<g class="c-teal"><rect x="310" y="334" width="330" height="44" rx="8" stroke-width="0.5"/><text class="ts" x="322" y="362">os (Windows, Mac, Linux…)</text></g>
+<text class="ts" x="40" y="402">* = feature calculada que no existía en el texto    ·    gris = entrada, verde = salida</text>
+</svg>

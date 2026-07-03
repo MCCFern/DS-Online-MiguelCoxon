@@ -4,7 +4,8 @@
 
 > A Machine Learning model that estimates a laptop's price (€) from its technical
 > specifications. The heart of the project is **feature engineering** on raw-text data and a
-> rigorous model comparison, from a linear baseline to **XGBoost**.
+> rigorous model comparison, from a linear baseline to a **gradient-boosting blend**
+> (XGBoost · LightGBM · CatBoost).
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8-F7931E?logo=scikitlearn&logoColor=white)
@@ -55,6 +56,10 @@ doesn't even exist in the data: it has to be *computed*.
 
 `Product` (480 unique values) is dropped due to excessive cardinality.
 
+<p align="center">
+  <img src="assets/fe-pipeline.en.svg" alt="One raw text row turns into several numeric and categorical features" width="760">
+</p>
+
 ---
 
 ## 🔬 Methodology
@@ -74,17 +79,29 @@ powerful*.
 
 ## 📈 Results
 
-RMSE estimated by 5-fold cross-validation on the **full** `train.csv`, in euros — each figure
-is printed by its own notebook (section 5; section 4.4 in 04), so it's reproducible:
+RMSE in euros. **CV** is the honest estimate (5-fold cross-validation on the full `train.csv`,
+printed by each notebook); **leaderboard** is the real Kaggle score on the hidden labels:
 
-| Notebook | Model | RMSE (€) ↓ | Role |
-|---|---|:---:|---|
-| `01_submission_baseline` | Linear Regression (+ `log1p`) | ~355 | Interpretable baseline |
-| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | Classic ensemble models |
-| `03_submission_xgboost` | **XGBoost** | ~257 | Best single model |
-| `04_submission_blend` | **Blend** XGB+LGBM+CatBoost+Ridge (NNLS) 🏆 | **~218** | Competition mode |
+| Notebook | Model | RMSE CV (€) | Leaderboard (€) | Role |
+|---|---|:---:|:---:|---|
+| `01_submission_baseline` | Linear Regression (+ `log1p`) | ~355 | 356.63 | Interpretable baseline |
+| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | 313.16 | Classic ensemble models |
+| `03_submission_xgboost` | **XGBoost** | ~257 | 308.62 | Best single model |
+| `04_submission_blend` | **Blend** XGB+LGBM+CatBoost+Ridge (NNLS) 🏆 | **~218** | **233.85** | Competition mode |
 
-> From baseline to XGBoost: **−€98 (~28%)**. With the competition-mode blend: **−€137 (~39%)**.
+> From baseline to blend: **−€123 real RMSE (−34%)**, and **−€75 (−24%)** over the best single model.
+
+The biggest jump comes from **v1 → v2** feature engineering: rescuing `Product` as a *family*,
+CPU generation, GPU model number… Here is what v2 adds over v1, column by column:
+
+<p align="center">
+  <img src="assets/fe-v2-breakdown.en.svg" alt="What v1 extracted and what v2 adds, for each raw column" width="760">
+</p>
+
+The gap between CV and the leaderboard **measures memorization**: the baseline (which can't
+memorize) nailed its estimate (+€1.4), whereas XGBoost v1 paid +€51 because part of its edge was
+memorizing spec combinations. v2 feature engineering turns that memorization into **portable
+signal** (`family`, `cpu_gen`…) and cuts the toll to just +€16.
 
 ---
 
@@ -114,19 +131,17 @@ is printed by its own notebook (section 5; section 4.4 in 04), so it's reproduci
 
 ```
 TC_04_Sprint_12_Kaggle/
-├── data/
-│   ├── train.csv               # 912 laptops with price
-│   ├── test.csv                # 391 laptops to predict
-│   └── sample_submission.csv   # expected submission format
-├── 01_submission_baseline.ipynb   # Linear Regression  → submission_01_baseline.csv
-├── 02_submission_rf_svr.ipynb     # Random Forest + SVR → submission_02_randomforest.csv
-├── 03_submission_xgboost.ipynb    # XGBoost              → submission_03_xgboost.csv
-├── 04_submission_blend.ipynb      # Competition-mode blend → submission_04_blend.csv
+├── data/                          # train.csv · test.csv · sample_submission.csv
+├── assets/                        # README SVG diagrams (es / en)
+├── 01_submission_baseline.ipynb   # Linear Regression
+├── 02_submission_rf_svr.ipynb     # Random Forest + SVR
+├── 03_submission_xgboost.ipynb    # XGBoost
+├── 04_submission_blend.ipynb      # Blend (competition mode)
 ├── submission_01_baseline.csv
 ├── submission_02_randomforest.csv
-├── submission_03_xgboost.csv
+├── submission_03_xgboostv2.csv    # (NB3's checker writes it as submission_03_xgboost.csv)
 ├── submission_04_blend.csv
-└── README.md
+└── README.md · README_ES-ES.md · README_EN-EN.md
 ```
 
 ---

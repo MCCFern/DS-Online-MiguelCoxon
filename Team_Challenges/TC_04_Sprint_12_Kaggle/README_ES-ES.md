@@ -4,8 +4,8 @@
 
 > Modelo de Machine Learning que estima el precio (€) de un portátil a partir de sus
 > especificaciones técnicas. El núcleo del proyecto es el **feature engineering** sobre
-> datos en texto crudo y una comparativa rigurosa de modelos, de un baseline lineal a
-> **XGBoost**.
+> datos en texto crudo y una comparativa rigurosa de modelos, de un baseline lineal a un
+> **blend** de gradient boosting (XGBoost · LightGBM · CatBoost).
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8-F7931E?logo=scikitlearn&logoColor=white)
@@ -56,6 +56,10 @@ siquiera existe en los datos: hay que *calcularla*.
 
 `Product` (480 valores únicos) se descarta por cardinalidad excesiva.
 
+<p align="center">
+  <img src="assets/fe-pipeline.es.svg" alt="Una fila de texto crudo se convierte en varias features numéricas y categóricas" width="760">
+</p>
+
 ---
 
 ## 🔬 Metodología
@@ -76,17 +80,31 @@ progresión clara: *de lo simple a lo potente*.
 
 ## 📈 Resultados
 
-RMSE estimado por validación cruzada (5-fold) sobre **todo** `train.csv`, en euros — cada
-cifra la imprime su propio notebook (sección 5; en el 04, la 4.4), así que es reproducible:
+RMSE en euros. La **CV** es la estimación honesta (validación cruzada 5-fold sobre todo
+`train.csv`, que imprime cada notebook); el **leaderboard** es el score real de Kaggle sobre
+las etiquetas ocultas:
 
-| Notebook | Modelo | RMSE (€) ↓ | Rol |
-|---|---|:---:|---|
-| `01_submission_baseline` | Regresión Lineal (+ `log1p`) | ~355 | Baseline interpretable |
-| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | Modelos de ensemble clásicos |
-| `03_submission_xgboost` | **XGBoost** | ~257 | Mejor modelo individual |
-| `04_submission_blend` | **Blend** XGB+LGBM+CatBoost+Ridge (NNLS) 🏆 | **~218** | Modo competición |
+| Notebook | Modelo | RMSE CV (€) | Leaderboard (€) | Rol |
+|---|---|:---:|:---:|---|
+| `01_submission_baseline` | Regresión Lineal (+ `log1p`) | ~355 | 356.63 | Baseline interpretable |
+| `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | 313.16 | Modelos de ensemble clásicos |
+| `03_submission_xgboost` | **XGBoost** | ~257 | 308.62 | Mejor modelo individual |
+| `04_submission_blend` | **Blend** XGB+LGBM+CatBoost+Ridge (NNLS) 🏆 | **~218** | **233.85** | Modo competición |
 
-> Del baseline al XGBoost: **−98 € (~28 %)**. Con el blend del modo competición: **−137 € (~39 %)**.
+> Del baseline al blend: **−123 € de RMSE real (−34 %)**, y **−75 € (−24 %)** sobre el mejor modelo individual.
+
+El mayor salto viene del feature engineering **v1 → v2**: rescatar `Product` como *familia*,
+la generación de la CPU, el número de modelo de la GPU… Esto es lo que la v2 añade sobre la v1,
+columna a columna:
+
+<p align="center">
+  <img src="assets/fe-v2-breakdown.es.svg" alt="Qué extraía la v1 y qué añade la v2 para cada columna cruda" width="760">
+</p>
+
+La distancia entre la CV y el leaderboard **mide memorización**: el baseline (que no puede
+memorizar) clavó su estimación (+1.4 €), mientras que el XGBoost v1 pagó +51 € porque parte de
+su ventaja era memorizar combinaciones de specs. La FE v2 convierte esa memorización en **señal
+portátil** (`family`, `cpu_gen`…) y baja el peaje a solo +16 €.
 
 ---
 
@@ -117,19 +135,17 @@ cifra la imprime su propio notebook (sección 5; en el 04, la 4.4), así que es 
 
 ```
 TC_04_Sprint_12_Kaggle/
-├── data/
-│   ├── train.csv               # 912 portátiles con precio
-│   ├── test.csv                # 391 portátiles a predecir
-│   └── sample_submission.csv   # formato de entrega esperado
-├── 01_submission_baseline.ipynb   # Regresión Lineal  → submission_01_baseline.csv
-├── 02_submission_rf_svr.ipynb     # Random Forest + SVR → submission_02_randomforest.csv
-├── 03_submission_xgboost.ipynb    # XGBoost              → submission_03_xgboost.csv
-├── 04_submission_blend.ipynb      # Blend modo competición → submission_04_blend.csv
+├── data/                          # train.csv · test.csv · sample_submission.csv
+├── assets/                        # diagramas SVG del README (es / en)
+├── 01_submission_baseline.ipynb   # Regresión Lineal
+├── 02_submission_rf_svr.ipynb     # Random Forest + SVR
+├── 03_submission_xgboost.ipynb    # XGBoost
+├── 04_submission_blend.ipynb      # Blend (modo competición)
 ├── submission_01_baseline.csv
 ├── submission_02_randomforest.csv
-├── submission_03_xgboost.csv
+├── submission_03_xgboostv2.csv    # (el checker del NB3 la escribe como submission_03_xgboost.csv)
 ├── submission_04_blend.csv
-└── README.md
+└── README.md · README_ES-ES.md · README_EN-EN.md
 ```
 
 ---
