@@ -75,15 +75,16 @@ powerful*.
 ## 📈 Results
 
 RMSE estimated by 5-fold cross-validation on the **full** `train.csv`, in euros — each figure
-is printed by **section 5** of its notebook, so it's reproducible by running it:
+is printed by its own notebook (section 5; section 4.4 in 04), so it's reproducible:
 
 | Notebook | Model | RMSE (€) ↓ | Role |
 |---|---|:---:|---|
 | `01_submission_baseline` | Linear Regression (+ `log1p`) | ~355 | Interpretable baseline |
 | `02_submission_rf_svr` | **Random Forest** (+ SVR) | ~280 | Classic ensemble models |
-| `03_submission_xgboost` | **XGBoost** 🏆 | **~257** | Best model |
+| `03_submission_xgboost` | **XGBoost** | ~257 | Best single model |
+| `04_submission_blend` | **Blend** XGB+LGBM+CatBoost+Ridge (NNLS) 🏆 | **~218** | Competition mode |
 
-> From baseline to XGBoost: **−€98 error (~28% improvement)**.
+> From baseline to XGBoost: **−€98 (~28%)**. With the competition-mode blend: **−€137 (~39%)**.
 
 ---
 
@@ -99,9 +100,13 @@ is printed by **section 5** of its notebook, so it's reproducible by running it:
   candidates on the same folds and is optimistically biased (*winner's curse*). Every "winner"
   gets re-validated on an untouched holdout: in notebook 03 the search winner did **not** beat
   the base config → the final submission ships the base config.
-- **No over-engineering**: LightGBM and a *blend* are compared inside notebook 03 itself;
-  neither beats single XGBoost consistently (differences within CV noise) → ties go to the
-  **simple, defensible** solution.
+- **No over-engineering (in the main deliverable)**: with v1 features, a 1:1 *blend* didn't beat
+  single XGBoost (notebook 03) → ties go to the **simple, defensible** solution. Notebook 04
+  shows the flip side: when a blend genuinely pays off.
+- **Competition mode (notebook 04)**: `Product` is rescued as a product *family* (~86 lines —
+  the signal notebooks 1–3 threw away), plus fine CPU/GPU detail, and a 4-model blend with
+  **NNLS weights** fitted on OOF from some fold seeds and **validated on virgin seeds** →
+  ~€218 (an extra −15% over the best single model).
 
 ---
 
@@ -115,10 +120,12 @@ TC_04_Sprint_12_Kaggle/
 │   └── sample_submission.csv   # expected submission format
 ├── 01_submission_baseline.ipynb   # Linear Regression  → submission_01_baseline.csv
 ├── 02_submission_rf_svr.ipynb     # Random Forest + SVR → submission_02_randomforest.csv
-├── 03_submission_xgboost.ipynb    # XGBoost (best)      → submission_03_xgboost.csv
+├── 03_submission_xgboost.ipynb    # XGBoost              → submission_03_xgboost.csv
+├── 04_submission_blend.ipynb      # Competition-mode blend → submission_04_blend.csv
 ├── submission_01_baseline.csv
 ├── submission_02_randomforest.csv
 ├── submission_03_xgboost.csv
+├── submission_04_blend.csv
 └── README.md
 ```
 
@@ -128,10 +135,11 @@ TC_04_Sprint_12_Kaggle/
 
 ```bash
 # 1) Install dependencies
-pip install numpy pandas scikit-learn xgboost lightgbm matplotlib seaborn jupyter
+pip install numpy pandas scikit-learn xgboost lightgbm catboost matplotlib seaborn jupyter
 
 # 2) Open and run any notebook end-to-end.
 #    Each one regenerates its own submission_XX_*.csv, ready for Kaggle.
+#    (04 takes ~40-50 min: its CatBoost trains ~90 models.)
 jupyter notebook 03_submission_xgboost.ipynb
 ```
 
@@ -141,7 +149,7 @@ jupyter notebook 03_submission_xgboost.ipynb
 
 ## 🛠️ Stack
 
-`Python` · `pandas` · `NumPy` · `scikit-learn` · `XGBoost` · `LightGBM` · `Matplotlib` · `seaborn`
+`Python` · `pandas` · `NumPy` · `scikit-learn` · `XGBoost` · `LightGBM` · `CatBoost` · `Matplotlib` · `seaborn`
 
 **Skills demonstrated:** cleaning & parsing of unstructured data · feature engineering ·
 reproducible leakage-free pipelines · cross-validation · model comparison & tuning ·
