@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Datos crudos con informacion personal (RGPD) — nunca versionar.
+# Exportes del sistema de reservas del spa (Project Break II): contienen
+# nombre, telefono y email de clientes reales. Purgados del historico el
+# 14-jul-2026; esta regla evita que vuelvan a entrar.
+Informe-personalizado*.csv
+*_NOUP*
