@@ -212,3 +212,34 @@ __marimo__/
 # 14-jul-2026; esta regla evita que vuelvan a entrar.
 Informe-personalizado*.csv
 *_NOUP*
+
+# Datasets de imagenes de los sprints de Deep Learning (CNN).
+# Se descargan de Kaggle / Hugging Face, son reproducibles y pesan cientos de MB
+# (Sprint_16: 414 MB en ~30.000 jpg). El entregable son los notebooks con sus
+# salidas, no los datos de entrada.
+#
+# Solo se ignoran las imagenes que cuelgan de un directorio "data/".
+# Las de los directorios "img/" son ilustraciones de los enunciados y SI se
+# versionan, igual que los CSV de los workouts (mnist_clase_convo.csv, etc.).
+**/data/**/*.jpg
+**/data/**/*.jpeg
+**/data/**/*.png
+
+# Comprimidos de datasets recien descargados, antes de descomprimirlos.
+**/data/**/*.zip
+
+# Modelos y pesos entrenados de Keras / TensorFlow.
+# Son artefactos generados: se vuelven a obtener ejecutando el notebook, y un
+# modelo de CNN ocupa facilmente decenas de MB. Cubre el formato nativo de
+# Keras 3 (.keras), los pesos sueltos (.weights.h5) y el HDF5 antiguo.
+*.keras
+*.h5
+*.hdf5
+
+# Modelos exportados en formato TensorFlow SavedModel (model.export()).
+saved_model/
+*.pb
+
+# OJO: los .joblib NO se ignoran a proposito. La masterclass de Pipelines
+# (Masterclasses/MC_03_Sprint_13_Pipelines) versiona dos modelos de sklearn
+# como parte de su entregable, y son pequenos.
