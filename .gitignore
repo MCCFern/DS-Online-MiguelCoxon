@@ -221,6 +221,12 @@ Informe-personalizado*.csv
 # Solo se ignoran las imagenes que cuelgan de un directorio "data/".
 # Las de los directorios "img/" son ilustraciones de los enunciados y SI se
 # versionan, igual que los CSV de los workouts (mnist_clase_convo.csv, etc.).
+#
+# EXCEPCION: las imagenes de Sprint_16 que venian en el repo de la escuela
+# (tb-ds-online/DS-Online) se versionan con `git add -f` como copia de
+# seguridad, porque el acceso a ese repo se cierra. Una vez versionadas, git
+# las sigue aunque coincidan con estas reglas. Las descargadas por mi siguen
+# ignoradas.
 **/data/**/*.jpg
 **/data/**/*.jpeg
 **/data/**/*.png
